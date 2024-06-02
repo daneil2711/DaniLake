@@ -11,6 +11,12 @@ services:
       - ./notebooks:/notebooks
       - jupyterlab_config:/home/jovyan/.local/share/jupyter
       - jupyterlab_config:/home/jovyan/.jupyter
+  hadoop:
+    build: ./images/hadoop
+    container_name: hadoop
+    hostname: hadoop
+    ports:
+      - "9870:9870"
 
 volumes:
   jupyterlab_config:

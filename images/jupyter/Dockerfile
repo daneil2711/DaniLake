@@ -16,4 +16,4 @@ RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel'), type = 'source')"
 EXPOSE 8888
 COPY configs/scripts /
 
-ENTRYPOINT ["/bin/bash", "bootstrap.sh"]
+ENTRYPOINT ["/bin/bash", "bootstrap2.sh"]
