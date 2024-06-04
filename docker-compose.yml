@@ -1,22 +1,20 @@
 version: "3.7"
 services:
-  jupyter:
-    build: ./images/jupyter
-    container_name: jupyter
-    hostname: jupyter
-    ports:
-      - "8888:8888" 
-      - "9000:9000" 
-    volumes:
-      - ./notebooks:/notebooks
-      - jupyterlab_config:/home/jovyan/.local/share/jupyter
-      - jupyterlab_config:/home/jovyan/.jupyter
   hadoop:
     build: ./images/hadoop
     container_name: hadoop
     hostname: hadoop
     ports:
-      - "9870:9870"
+      - "9870:9870" # HDFS / WebHDFS
+      - "8088:8088" # ResourceManager
+      - "9000:9000" # Conexao Externa
+      - "8042:8042" # DataNode
+      - "9864:9864" # DataNode WebUI
+      - "8888:8888" #Jupyter
+    volumes:
+      - ./notebooks:/usr/notebooks
+      - jupyterlab_config:/home/jovyan/.local/share/jupyter
+      - jupyterlab_config:/home/jovyan/.jupyter
 
 volumes:
   jupyterlab_config:
