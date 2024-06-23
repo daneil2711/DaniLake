@@ -19,15 +19,24 @@ export HDFS_SECONDARYNAMENODE_USER=root
 export YARN_RESOURCEMANAGER_USER=root
 export YARN_NODEMANAGER_USER=root
 
-# Startando serviços
+# Startando hadoop
 $HADOOP_HOME/sbin/start-dfs.sh
 $HADOOP_HOME/sbin/start-yarn.sh
+
+# Startando hive
+schematool -dbType derby -initSchema
+nohup hive --service metastore > metastore.log 2>&1 &
+
 
 #Inclusão Users
 hdfs dfs -mkdir /user
 hdfs dfs -mkdir /user/Daniel
+# hdfs dfs -mkdir /user/hive/warehouse
+
+# hdfs dfs -chown g+w /user
+# hdfs dfs -chown g+w x/user
 hdfs dfs -chown -R Daniel:root /user/Daniel
 
 #iniciando jupyter
-jupyter-lab --NotebookApp.token='' --ip='0.0.0.0' --port=8888 --no-browser --allow-root
+nohup jupyter-lab --NotebookApp.token='' --ip='0.0.0.0' --port=8888 --no-browser --allow-root &
 while :; do sleep 2073600; done

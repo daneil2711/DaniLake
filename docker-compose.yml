@@ -11,6 +11,9 @@ services:
       - "8042:8042" # DataNode
       - "9864:9864" # DataNode WebUI
       - "8888:8888" #Jupyter
+      - "11000:10000" # HiveServer2 - Binary Mode
+      - "11001:10001" # HiveServer - HTTP Mode
+      - "11002:10002" # Hiveserver WebUI
     volumes:
       - ./notebooks:/usr/notebooks
       - jupyterlab_config:/home/jovyan/.local/share/jupyter
