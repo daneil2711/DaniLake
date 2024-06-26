@@ -1,5 +1,6 @@
 FROM openjdk:8-jdk-slim
 
+#Vars hadoop
 ENV HADOOP_VERSION 3.2.4
 ENV HADOOP_HOME /usr/hadoop
 ENV HADOOP_INSTALL $HADOOP_HOME
@@ -8,15 +9,27 @@ ENV HADOOP_COMMON_HOME $HADOOP_HOME
 ENV HADOOP_HDFS_HOME $HADOOP_HOME
 ENV HADOOP_YARN_HOME $HADOOP_HOME
 ENV HADOOP_COMMON_LIB_NATIVE $HADOOP_HOME/lib/native
+ENV HADOOP_USER_CLASSPATH_FIRST true
 ENV PATH $PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 ENV HADOOP_OPTS "-Djava.library.path=$HADOOP_HOME/lib/native"
 
-ENV HIVE_VERSION 3.1.3
+#Vars Hive
+ENV HIVE_VERSION 3.1.2
 ENV HIVE_HOME /usr/hive
+ENV HIVE_LIB /usr/hive/lib
 ENV HIVE_CONF_DIR $HIVE_HOME/conf
 ENV PATH $PATH:$HIVE_HOME/bin
 ENV CLASSPATH $CLASSPATH:$HADOOP_HOME/lib/*:.
 ENV CLASSPATH $CLASSPATH:$HIVE_HOME/lib/*:.
+
+#Vars Derby
+ENV DERBY_HOME /usr/derby
+ENV PATH $PATH:$DERBY_HOME/bin
+
+#Vars Spark
+ENV SPARK_VERSION 3.4.3
+ENV SPARK_HOME /usr/spark
+ENV PATH $PATH:$SPARK_HOME/bin
 
 USER root
 
@@ -33,6 +46,9 @@ RUN apt-get update \
     && chown -R root:root ${HADOOP_HOME} \
     && echo "export JAVA_HOME=${JAVA_HOME}" >> /etc/environment
 
+# Copia dos XMLs de conf
+COPY configs/hadoop/*.xml ${HADOOP_HOME}/etc/hadoop/
+
 #Configs SSH
 RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa \
     && cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys \
@@ -46,14 +62,29 @@ RUN wget https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-$
     && rm ${HIVE_HOME}/lib/guava-19.0.jar \
     && cp ${HADOOP_HOME}/share/hadoop/common/lib/guava-27.0-jre.jar ${HIVE_HOME}/lib/
 
-#Arquivos de conf
+#Arquivos de conf hive
 COPY configs/hive/hive-site.xml ${HIVE_HOME}/conf
 COPY configs/hive/hive-env.sh ${HIVE_HOME}/conf
 COPY configs/hive/hive-schema-3.1.0.derby.sql ${HIVE_HOME}/scripts/metastore/upgrade/derby
 
+#Instalação Derby
+RUN wget https://archive.apache.org/dist/db/derby/db-derby-10.14.2.0/db-derby-10.14.2.0-bin.tar.gz \
+    && tar -xzf db-derby-10.14.2.0-bin.tar.gz \
+    && rm db-derby-10.14.2.0-bin.tar.gz \
+    && mv db-derby-10.14.2.0-bin ${DERBY_HOME} \
+    && cp -r ${DERBY_HOME}/lib /${HADOOP_HOME}/lib
 
-COPY configs/jupyter/requirements.txt /
+#Instalação SPARK
+RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz \
+&& tar -xzf spark-${SPARK_VERSION}-bin-hadoop3.tgz \
+&& rm spark-${SPARK_VERSION}-bin-hadoop3.tgz \
+&& mv spark-${SPARK_VERSION}-bin-hadoop3 ${SPARK_HOME} 
+
+#Arquivos de conf hive
+COPY configs/spark/*.xml ${SPARK_HOME}/conf
+
 #Instalação Jupyter
+COPY configs/jupyter/requirements.txt /
 RUN apt install -y python3 pip \
     && pip install jupyterlab \
     && mkdir /usr/notebooks \
@@ -61,15 +92,14 @@ RUN apt install -y python3 pip \
 
 #Instalação R
 RUN apt-get install r-base r-base-dev -y --fix-missing \
-    && apt-get install libzmq3-dev libcurl4-openssl-dev libssl-dev jupyter-core jupyter-client -y 
+    && apt-get install libzmq3-dev libcurl4-openssl-dev libssl-dev jupyter-core jupyter-client -y --fix-missing
 RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel'), type = 'source')" \
     && R -e "IRkernel::installspec(user = FALSE)"
 
-# Copia dos XMLs de conf e script pra rodar os comandos
-COPY configs/hadoop/*.xml ${HADOOP_HOME}/etc/hadoop/
+#expose portas
+EXPOSE 9000 22 8888 10000 1527
+
+#bootstrap
 COPY configs/scripts /
-
-EXPOSE 9000 22 8888 10000
-
 ENTRYPOINT ["/bin/bash", "bootstrap.sh"]
 
