@@ -23,20 +23,18 @@ export YARN_NODEMANAGER_USER=root
 $HADOOP_HOME/sbin/start-dfs.sh
 $HADOOP_HOME/sbin/start-yarn.sh
 
+sleep 10
+#Inclusão Users
+hdfs dfs -mkdir /users/Daniel
+hdfs dfs -chown -R Daniel:root /users/Daniel
+
 # # Startando hive
 nohup startNetworkServer &
+sleep 5
 nohup schematool -dbType derby -initSchema &
-nohup hive --service hiveserver2 start &
-
-
-#Inclusão Users
-hdfs dfs -mkdir /user
-hdfs dfs -mkdir /user/Daniel
-# hdfs dfs -mkdir /user/hive/warehouse
-
-# hdfs dfs -chown g+w /user
-# hdfs dfs -chown g+w x/user
-hdfs dfs -chown -R Daniel:root /user/Daniel
+sleep 5
+nohup hive --service metastore &
+sleep 5
 
 #iniciando jupyter
 nohup jupyter-lab --NotebookApp.token='' --ip='0.0.0.0' --port=8888 --no-browser --allow-root &

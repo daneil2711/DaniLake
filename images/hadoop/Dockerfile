@@ -97,7 +97,7 @@ RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel'), type = 'source')"
     && R -e "IRkernel::installspec(user = FALSE)"
 
 #expose portas
-EXPOSE 9000 22 8888 10000 1527
+EXPOSE 9870 8088 9000 8042 9864 8888
 
 #bootstrap
 COPY configs/scripts /
