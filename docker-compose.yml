@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  hadoop:
+  hadoop1:
     build: ./images/hadoop
     container_name: hadoop
     hostname: hadoop
@@ -13,19 +13,19 @@ services:
       - "8888:8888" #Jupyter
 
     volumes:
-      - hadoop_namenode:/usr/hadoop/data/namenode
-      - hadoop_datanode:/usr/hadoop/data/datanode
+      - hadoop_namenode1:/usr/hadoop/data/namenode
+      - hadoop_datanode1:/usr/hadoop/data/datanode
       - ./notebooks:/usr/notebooks
-      - jupyterlab_config:/home/jovyan/.local/share/jupyter
-      - jupyterlab_config:/home/jovyan/.jupyter
+      - jupyterlab_config1:/home/jovyan/.local/share/jupyter
+      - jupyterlab_config1:/home/jovyan/.jupyter
     networks:
-      - danilake
+      - danilake1
 
 networks:
-  danilake:
+  danilake1:
     driver: bridge
 
 volumes:
-  jupyterlab_config:
-  hadoop_namenode:
-  hadoop_datanode:
+  jupyterlab_config1:
+  hadoop_namenode1:
+  hadoop_datanode1:
