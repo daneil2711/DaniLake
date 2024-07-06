@@ -91,9 +91,16 @@ RUN apt install -y python3 pip \
     && pip install -r requirements.txt
 
 #Instalação R
-RUN apt-get install r-base r-base-dev -y --fix-missing \
-    && apt-get install libzmq3-dev libcurl4-openssl-dev libssl-dev jupyter-core jupyter-client -y --fix-missing
-RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel'), type = 'source')" \
+RUN apt-get update \
+    && apt install software-properties-common dirmngr -y 
+
+RUN gpg --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' 
+RUN gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | tee /etc/apt/trusted.gpg.d/cran_debian_key.asc \
+    && add-apt-repository 'deb http://cloud.r-project.org/bin/linux/debian bullseye-cran40/' \
+    && apt-get update \
+    && apt install r-base r-base-dev -y 
+
+RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR'), type = 'source')" \
     && R -e "IRkernel::installspec(user = FALSE)"
 
 #expose portas
