@@ -1,0 +1,4 @@
+numpy
+pandas
+tqdm
+pyspark==3.4.3

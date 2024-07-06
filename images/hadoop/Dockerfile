@@ -83,21 +83,21 @@ RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
 #Arquivos de conf hive
 COPY configs/spark/*.xml ${SPARK_HOME}/conf
 
-#Instalação Jupyter
-COPY configs/jupyter/requirements.txt /
-RUN apt install -y python3 pip \
-    && pip install jupyterlab \
-    && mkdir /usr/notebooks \
-    && pip install -r requirements.txt
+# #Instalação Jupyter
+# COPY configs/jupyter/requirements.txt /
+# RUN apt install -y python3 pip \
+#     && pip install jupyterlab \
+#     && mkdir /usr/notebooks \
+#     && pip install -r requirements.txt
 
-#Instalação R
-RUN apt-get install r-base r-base-dev -y --fix-missing \
-    && apt-get install libzmq3-dev libcurl4-openssl-dev libssl-dev jupyter-core jupyter-client -y --fix-missing
-RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel'), type = 'source')" \
-    && R -e "IRkernel::installspec(user = FALSE)"
+# #Instalação R
+# RUN apt-get install r-base r-base-dev -y --fix-missing \
+#     && apt-get install libzmq3-dev libcurl4-openssl-dev libssl-dev jupyter-core jupyter-client -y --fix-missing
+# RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel'), type = 'source')" \
+#     && R -e "IRkernel::installspec(user = FALSE)"
 
 #expose portas
-EXPOSE 9870 8088 9000 8042 9864 8888
+EXPOSE 9870 8088 9000 8042 9864
 
 #bootstrap
 COPY configs/scripts /

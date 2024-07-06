@@ -10,14 +10,24 @@ services:
       - "9000:9000" # Conexao Externa HDFS
       - "8042:8042" # DataNode
       - "9864:9864" # DataNode WebUI
-      - "8888:8888" #Jupyter
 
     volumes:
       - hadoop_namenode1:/usr/hadoop/data/namenode
       - hadoop_datanode1:/usr/hadoop/data/datanode
+    networks:
+      - danilake1
+
+  jupyter:
+    build: ./images/jupyter
+    container_name: jupyter
+    hostname: jupyter
+    ports:
+      - "8888:8888" #Jupyter
+
+    volumes:
       - ./notebooks:/usr/notebooks
-      - jupyterlab_config1:/home/jovyan/.local/share/jupyter
-      - jupyterlab_config1:/home/jovyan/.jupyter
+      - jupyterlab_config:/home/jovyan/.local/share/jupyter
+      - jupyterlab_config:/home/jovyan/.jupyter
     networks:
       - danilake1
 
@@ -26,6 +36,6 @@ networks:
     driver: bridge
 
 volumes:
-  jupyterlab_config1:
+  jupyterlab_config:
   hadoop_namenode1:
   hadoop_datanode1:
