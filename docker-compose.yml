@@ -2,8 +2,8 @@ version: "3.7"
 services:
   hadoop1:
     build: ./images/hadoop
-    container_name: hadoop
-    hostname: hadoop
+    container_name: hadoop1
+    hostname: hadoop1
     ports:
       - "9870:9870" # HDFS / WebHDFS
       - "8088:8088" # ResourceManager
