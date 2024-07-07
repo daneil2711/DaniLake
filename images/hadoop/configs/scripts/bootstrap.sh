@@ -25,6 +25,7 @@ $HADOOP_HOME/sbin/start-yarn.sh
 
 sleep 10
 #Inclusão Users
+hdfs dfs -mkdir /users/
 hdfs dfs -mkdir /users/Daniel
 hdfs dfs -chown -R Daniel:root /users/Daniel
 
@@ -37,6 +38,7 @@ nohup hive --service metastore &
 sleep 5
 
 #iniciando jupyter
+cd /usr/notebooks
 nohup jupyter-lab --NotebookApp.token='' --ip='0.0.0.0' --port=8888 --no-browser --allow-root &
 
 
