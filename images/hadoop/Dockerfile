@@ -91,8 +91,13 @@ RUN apt install -y python3 pip \
     && pip install -r requirements.txt
 
 #Instalação R
-RUN apt-get update \
-    && apt install software-properties-common dirmngr -y 
+RUN apt-get update 
+RUN apt install software-properties-common dirmngr -y 
+
+COPY configs/scripts/gpg.sh /
+#GPG falha ao adicionar a chave na primeira tentantiva (aparentemente cria um diretório e arquivo necessário para adicionar a chave)
+# Fiz o script pensando na falha para funcionar no comando abaixo
+RUN sh gpg.sh
 
 RUN gpg --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' 
 RUN gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | tee /etc/apt/trusted.gpg.d/cran_debian_key.asc \
@@ -102,6 +107,7 @@ RUN gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | tee /etc/a
 
 RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR'), type = 'source')" \
     && R -e "IRkernel::installspec(user = FALSE)"
+
 
 #expose portas
 EXPOSE 9870 8088 9000 8042 9864 8888
