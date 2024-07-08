@@ -108,9 +108,8 @@ RUN gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | tee /etc/a
 RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR'), type = 'source')" \
     && R -e "IRkernel::installspec(user = FALSE)"
 
-
 #expose portas
-EXPOSE 9870 8088 9000 8042 9864 8888
+EXPOSE 9870 8088 9000 8042 9864 8888 10000 10001 11002
 
 #bootstrap
 COPY configs/scripts /

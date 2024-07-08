@@ -23,4 +23,48 @@
         <name>hive.metastore.warehouse.dir</name>
         <value>hdfs://localhost:9000/users/hive/warehouse</value>
     </property>
+
+    <!-- Hive 2 -->
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <description>Enable user impersonation for HiveServer2</description>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication</name>
+        <value>NONE</value>
+        <description> Client authentication types. NONE: no authentication check LDAP: LDAP/AD based authentication KERBEROS: Kerberos/GSSAPI authentication CUSTOM: Custom authentication provider (Use with property hive.server2.custom.authentication.class) </description>
+    </property>
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10000</value>
+        <description>HTTP port number to listen on</description>
+    </property>
+    <property>
+        <name>hive.server2.transport.mode</name>
+        <value>binary</value>
+        <description>Set to http to enable HTTP transport mode</description>
+    </property>
+    <property>
+        <name>hive.server2.thrift.http.port</name>
+        <description>HTTP port number to listen on</description>
+        <value>10001</value>
+    </property>
+    <property>
+        <name>hive.server2.thrift.http.path</name>
+        <description>The service endpoint</description>
+        <value>cliservice</value>
+    </property>
+    <property>
+        <name>hive.metastore.sasl.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.hive.groups</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.hive.hosts</name>
+        <value>*</value>
+    </property>
 </configuration>

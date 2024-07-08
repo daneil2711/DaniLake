@@ -36,6 +36,8 @@ nohup schematool -dbType derby -initSchema &
 sleep 5
 nohup hive --service metastore &
 sleep 5
+nohup hive --service hiveserver2 &
+sleep 5
 
 #iniciando jupyter
 cd /usr/notebooks
