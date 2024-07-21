@@ -93,6 +93,8 @@ RUN apt install -y python3 pip \
 #Instalação R
 RUN apt-get update 
 RUN apt install software-properties-common dirmngr -y 
+#Necessario para instalar o factoextra (Kmeans) cmake e tydeverse (todo o resto) no R
+RUN apt install cmake libssl-dev libfontconfig1-dev libcurl4-openssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev -y
 
 COPY configs/scripts/gpg.sh /
 #GPG falha ao adicionar a chave na primeira tentantiva (aparentemente cria um diretório e arquivo necessário para adicionar a chave)
