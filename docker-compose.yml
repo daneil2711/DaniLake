@@ -23,6 +23,16 @@ services:
       - jupyterlab_config:/home/jovyan/.jupyter
     networks:
       - danilake
+  airflow:
+    build: ./images/airflow
+    container_name: airflow
+    hostname: airflow
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+    networks:
+      - danilake
 
 networks:
   danilake:
