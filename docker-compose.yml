@@ -23,16 +23,47 @@ services:
       - jupyterlab_config:/home/jovyan/.jupyter
     networks:
       - danilake
+    command: ["/usr/local/bin/bootstrap.sh"]
+
+  spark-master:
+    build: ./images/hadoop
+    container_name: spark-master
+    hostname: spark-master
+    ports:
+      - "7077:7077"  # Porta do Spark Master
+      - "8080:8080"  # Web UI do Spark Master
+    networks:
+      - danilake
+    command: ["/usr/local/bin/start-master.sh"]
+    depends_on:
+      - hadoop   
+
+  spark-worker:
+    build: ./images/hadoop
+    container_name: spark-worker
+    hostname: spark-worker
+    ports:
+      - "8081:8081"  # Web UI do Spark Worker
+    networks:
+      - danilake
+    command: ["/usr/local/bin/start-worker.sh"]
+    depends_on:
+      - hadoop 
+
   airflow:
     build: ./images/airflow
     container_name: airflow
     hostname: airflow
     ports:
-      - "8080:8080"
+      - "8099:8099"
     volumes:
       - ./dags:/opt/airflow/dags
+      - ./notebooks:/opt/airflow/notebooks
     networks:
       - danilake
+    depends_on:
+      - spark-master
+      - spark-worker
 
 networks:
   danilake:

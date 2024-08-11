@@ -1,7 +1,6 @@
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.utils.dates import days_ago
-import subprocess
 
 # Configuração padrão da DAG
 default_args = {
@@ -11,26 +10,25 @@ default_args = {
     'retries': 1,
 }
 
-def run_spark_script():
-    # Caminho para o script .py que você deseja executar
-    script_path = '/opt/airflow/dags/sql.py'
-    
-    # Comando para executar o script usando o Python instalado no container
-    subprocess.run(['python3', script_path], check=True)
-
-# Definindo a DAG
 with DAG(
-    'spark_python_operator_example',
+    'spark_submit_example',
     default_args=default_args,
-    description='Executa um script PySpark via PythonOperator',
+    description='DAG para executar um script PySpark via SparkSubmitOperator',
     schedule_interval=None,
 ) as dag:
 
-    # Operador PythonOperator
-    run_spark_task = PythonOperator(
-        task_id='run_spark_task',
-        python_callable=run_spark_script,
+    spark_submit_task = SparkSubmitOperator(
+        application='/opt/airflow/sql.py',
+        task_id='spark_submit_task',
+        conn_id='spark_default',
+        conf={
+            'spark.master': 'spark://spark-master:7077',
+            'spark.driver.memory': '2g',
+            'spark.executor.memory': '4g',
+            'spark.sql.warehouse.dir': 'hdfs://hadoop:9000/user/hive/warehouse',
+        },
+        application_args=['arg1', 'arg2'],
+        verbose=True,
     )
 
-    run_spark_task
-
+    spark_submit_task

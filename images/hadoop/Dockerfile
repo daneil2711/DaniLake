@@ -13,6 +13,9 @@ ENV HADOOP_USER_CLASSPATH_FIRST true
 ENV PATH $PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 ENV HADOOP_OPTS "-Djava.library.path=$HADOOP_HOME/lib/native"
 
+ENV SPARK_MASTER_HOST=spark-master
+ENV SPARK_MASTER_URL=spark://spark-master:7077
+
 #Vars Hive
 ENV HIVE_VERSION 3.1.2
 ENV HIVE_HOME /usr/hive
@@ -110,10 +113,14 @@ RUN gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | tee /etc/a
 RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR'), type = 'source')" \
     && R -e "IRkernel::installspec(user = FALSE)"
 
+#scripts spark
+COPY configs/scripts/ /usr/local/bin/
+RUN chmod +x /usr/local/bin/start-master.sh /usr/local/bin/start-worker.sh /usr/local/bin/bootstrap.sh
+    
 #expose portas
-EXPOSE 9870 8088 9000 8042 9864 8888 10000 10001 11002
+EXPOSE 9870 8088 9000 8042 9864 8888 10000 10001 11002 7077 8080 8081
 
 #bootstrap
-COPY configs/scripts /
-ENTRYPOINT ["/bin/bash", "bootstrap.sh"]
+# COPY configs/scripts /
+# ENTRYPOINT ["/bin/bash", "bootstrap.sh"]
 
