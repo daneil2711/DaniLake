@@ -14,6 +14,8 @@ services:
       - "10000:10000" # HiveServer2 - Binary Mode
       - "10001:10001" # HiveServer2 - HTTP Mode
       - "10002:10002" # Hiveserver2 WebUI
+      - "8099:8099" # Airflow
+      - "4040:4040" # Airflow
 
     volumes:
       - hadoop_namenode:/usr/hadoop/data/namenode
@@ -21,6 +23,7 @@ services:
       - ./notebooks:/usr/notebooks
       - jupyterlab_config:/home/jovyan/.local/share/jupyter
       - jupyterlab_config:/home/jovyan/.jupyter
+      - ./dags:/opt/airflow/dags
     networks:
       - danilake
     command: ["/usr/local/bin/bootstrap.sh"]
@@ -49,21 +52,6 @@ services:
     command: ["/usr/local/bin/start-worker.sh"]
     depends_on:
       - hadoop 
-
-  airflow:
-    build: ./images/airflow
-    container_name: airflow
-    hostname: airflow
-    ports:
-      - "8099:8099"
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./notebooks:/opt/airflow/notebooks
-    networks:
-      - danilake
-    depends_on:
-      - spark-master
-      - spark-worker
 
 networks:
   danilake:

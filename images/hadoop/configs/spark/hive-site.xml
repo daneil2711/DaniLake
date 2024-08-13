@@ -3,7 +3,7 @@
 <configuration>
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:derby://localhost:1527/metastore_db;create=true</value>
+        <value>jdbc:derby://hadoop:1527/metastore_db;create=true</value>
         <description>JDBC connect string for a JDBC metastore</description>
     </property>
     <property>
@@ -17,11 +17,11 @@
     </property>
     <property>
         <name>hive.metastore.uris</name>
-        <value>thrift://localhost:9083</value>
+        <value>thrift://hadoop:9083</value>
     </property>
     <property>
         <name>hive.metastore.warehouse.dir</name>
-        <value>hdfs://localhost:9000/users/hive/warehouse</value>
+        <value>hdfs://hadoop:9000/users/hive/warehouse</value>
     </property>
 
     <!-- Hive 2 -->

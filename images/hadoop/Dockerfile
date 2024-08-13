@@ -13,8 +13,8 @@ ENV HADOOP_USER_CLASSPATH_FIRST true
 ENV PATH $PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 ENV HADOOP_OPTS "-Djava.library.path=$HADOOP_HOME/lib/native"
 
-ENV SPARK_MASTER_HOST=spark-master
-ENV SPARK_MASTER_URL=spark://spark-master:7077
+ENV SPARK_MASTER_HOST spark-master
+ENV SPARK_MASTER_URL spark://spark-master:7077
 
 #Vars Hive
 ENV HIVE_VERSION 3.1.2
@@ -33,6 +33,16 @@ ENV PATH $PATH:$DERBY_HOME/bin
 ENV SPARK_VERSION 3.4.3
 ENV SPARK_HOME /usr/spark
 ENV PATH $PATH:$SPARK_HOME/bin
+
+#Vars airflow
+ENV AIRFLOW_HOME /opt/airflow
+ENV AIRFLOW__CORE__TEST_CONNECTION Enabled
+ENV AIRFLOW__WEBSERVER__WEB_SERVER_PORT 8099
+ENV AIRFLOW__CORE__LOAD_EXAMPLES False 
+#AIRFLOW API
+ENV AIRFLOW__CLI__ENDPOINT_URL http://localhost:8099
+ENV AIRFLOW__API__ENABLE_EXPERIMENTAL_API True
+ENV AIRFLOW__API__AUTH_BACKENDS airflow.api.auth.backend.basic_auth
 
 USER root
 
@@ -102,23 +112,26 @@ RUN apt install cmake libssl-dev libfontconfig1-dev libcurl4-openssl-dev libxml2
 COPY configs/scripts/gpg.sh /
 #GPG falha ao adicionar a chave na primeira tentantiva (aparentemente cria um diretório e arquivo necessário para adicionar a chave)
 # Fiz o script pensando na falha para funcionar no comando abaixo
-RUN sh gpg.sh
+# RUN sh gpg.sh
 
-RUN gpg --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' 
-RUN gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | tee /etc/apt/trusted.gpg.d/cran_debian_key.asc \
-    && add-apt-repository 'deb http://cloud.r-project.org/bin/linux/debian bullseye-cran40/' \
-    && apt-get update \
-    && apt install r-base r-base-dev -y 
+# RUN gpg --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' 
+# RUN gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | tee /etc/apt/trusted.gpg.d/cran_debian_key.asc \
+#     && add-apt-repository 'deb http://cloud.r-project.org/bin/linux/debian bullseye-cran40/' \
+#     && apt-get update \
+#     && apt install r-base r-base-dev -y 
 
-RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR'), type = 'source')" \
-    && R -e "IRkernel::installspec(user = FALSE)"
+# RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR'), type = 'source')" \
+#     && R -e "IRkernel::installspec(user = FALSE)"
+#Instalação airflow
+RUN pip install apache-airflow==2.8.1 \
+    && pip uninstall apache-airflow-providers-fab -y
 
 #scripts spark
 COPY configs/scripts/ /usr/local/bin/
 RUN chmod +x /usr/local/bin/start-master.sh /usr/local/bin/start-worker.sh /usr/local/bin/bootstrap.sh
     
 #expose portas
-EXPOSE 9870 8088 9000 8042 9864 8888 10000 10001 11002 7077 8080 8081
+EXPOSE 9870 8088 9000 8042 9864 8888 10000 10001 11002 7077 8080 8081 8099 4040
 
 #bootstrap
 # COPY configs/scripts /
