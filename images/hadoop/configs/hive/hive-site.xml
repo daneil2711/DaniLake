@@ -21,7 +21,7 @@
     </property>
     <property>
         <name>hive.metastore.warehouse.dir</name>
-        <value>hdfs://localhost:9000/users/hive/warehouse</value>
+        <value>hdfs://hadoop:9000/users/hive/warehouse</value>
     </property>
 
     <!-- Hive 2 -->
