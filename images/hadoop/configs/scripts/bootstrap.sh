@@ -75,8 +75,13 @@ if [ -z "$admin_exists" ]; then
 else
     echo "Admin user already exists"
 fi
+sleep 5
 
 airflow scheduler &
+sleep 5
+#Iniciando airflow
+nohup airflow webserver -p 8099 &
+sleep 10
 ## Ajustando spark conf
 # URL da API do Airflow (ajuste conforme necessário)
 AIRFLOW_API_URL="http://localhost:8099/api/v1/connections"
@@ -95,6 +100,7 @@ CONNECTION_JSON=$(cat <<EOF
 }
 EOF
 )
+
 # Delete e depois Post do conf (n consegui usar o PATCH)
 curl -X DELETE "$AIRFLOW_API_URL/$CONNECTION_ID" \
   -u "admin:admin"
@@ -105,8 +111,5 @@ response=$(curl -X POST $AIRFLOW_API_URL \
   -d "$CONNECTION_JSON")
 
 echo "Resposta da API: $response"
-
-#Iniciando airflow
-exec airflow webserver -p 8099
 
 while :; do sleep 2073600; done
