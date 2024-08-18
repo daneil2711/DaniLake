@@ -115,9 +115,16 @@ RUN sh gpg.sh \
 RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR','GGally','car','igraph','arules','arulesViz','urca','forecast','tidyverse','factoextra','Information'), type = 'source')" \
     && R -e "IRkernel::installspec(user = FALSE)"
 
-# Instalando bibliotecas Python do Jupyter
+#Instalando lib do delta e pyspark - fixei aqui pra aproveitar o cache do Docker
+RUN pip install pyspark==3.4.3\
+    && pip install delta-spark==2.4.0
+# Instalando libs Python do Jupyter
 COPY configs/jupyter/requirements.txt /
 RUN pip install -r requirements.txt
+
+# Config jupyter pra utilizar notebook como .py
+RUN jupyter-lab --generate-config
+COPY configs/jupyter/jupyter_lab_config.py /root/.jupyter/
 
 # Copia dos XMLs de conf
 COPY configs/hadoop/*.xml ${HADOOP_HOME}/etc/hadoop/
