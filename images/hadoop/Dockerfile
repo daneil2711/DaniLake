@@ -75,7 +75,15 @@ ENV AIRFLOW__API__AUTH_BACKENDS airflow.api.auth.backend.basic_auth
 RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz \
     && tar -xzf spark-${SPARK_VERSION}-bin-hadoop3.tgz \
     && mv spark-${SPARK_VERSION}-bin-hadoop3 ${SPARK_HOME} \
-    && rm spark-${SPARK_VERSION}-bin-hadoop3.tgz
+    && rm spark-${SPARK_VERSION}-bin-hadoop3.tgz \
+#Instalação do JAR para conexão com SQL Server -- peguei a versão 6.2 por questão de compatibilidade com o Java8
+# https://learn.microsoft.com/en-us/sql/connect/jdbc/microsoft-jdbc-driver-for-sql-server-support-matrix?view=sql-server-ver15#java-and-jdbc-specification-support
+# Passei o link da versão 6.2 hardcode
+    && wget -O mssql-jdbc.tar.gz https://go.microsoft.com/fwlink/?linkid=2122615 \
+    && tar -xzf mssql-jdbc.tar.gz --one-top-level=mssql-jdbc --strip-components=1 \
+    && cp -r mssql-jdbc/enu/*jar ${SPARK_HOME}/jars/ \
+    && rm mssql-jdbc.tar.gz \
+    && rm -rf mssql-jdbc 
 
 # Instalando Jupyter
 RUN apt-get install -y python3 pip \
@@ -104,7 +112,7 @@ RUN sh gpg.sh \
     && apt install r-base r-base-dev -y 
     
 #Lib R
-RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR'), type = 'source')" \
+RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR','GGally','car','igraph','arules','arulesViz','urca','forecast','tidyverse','factoextra','Information'), type = 'source')" \
     && R -e "IRkernel::installspec(user = FALSE)"
 
 # Instalando bibliotecas Python do Jupyter
