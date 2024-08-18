@@ -53,6 +53,17 @@ services:
     depends_on:
       - hadoop 
 
+  sqlserver:
+    build: ./images/sql
+    container_name: sqlserver
+    hostname: sqlserver
+    ports:
+      - "1433:1433"
+    networks:
+      - danilake
+    volumes:
+      - sqlserver_data:/var/opt/mssql  
+
 networks:
   danilake:
     driver: bridge
@@ -61,3 +72,4 @@ volumes:
   jupyterlab_config:
   hadoop_namenode:
   hadoop_datanode:
+  sqlserver_data:
