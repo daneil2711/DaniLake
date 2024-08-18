@@ -23,6 +23,7 @@ services:
       - ./notebooks:/usr/notebooks
       - jupyterlab_config:/home/jovyan/.local/share/jupyter
       - jupyterlab_config:/home/jovyan/.jupyter
+      - jupyterlab_config:/root/.jupyter/
       - ./dags:/opt/airflow/dags
     networks:
       - danilake
