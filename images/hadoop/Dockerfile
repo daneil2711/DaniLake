@@ -15,7 +15,7 @@ ENV PATH $PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 ENV HADOOP_OPTS "-Djava.library.path=$HADOOP_HOME/lib/native"
 
 # Instalando Hadoop
-RUN apt-get update && apt-get install -y ssh wget curl openssh-server \
+RUN apt-get update && apt-get install -y ssh wget curl openssh-server maven\
     && wget "https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" \
     && tar -xzf hadoop-${HADOOP_VERSION}.tar.gz \
     && mv hadoop-${HADOOP_VERSION} ${HADOOP_HOME} \
@@ -62,6 +62,10 @@ ENV SPARK_HOME /usr/spark
 ENV PATH $PATH:$SPARK_HOME/bin
 ENV SPARK_MASTER_HOST spark-master
 ENV SPARK_MASTER_URL spark://spark-master:7077
+
+ENV DELTA_VERSION=2.4.0
+ENV DELTA_GROUP=io.delta
+ENV DELTA_ARTIFACT=delta-core_2.12
 # Vars Airflow
 ENV AIRFLOW_HOME /opt/airflow
 ENV AIRFLOW__CORE__TEST_CONNECTION Enabled
@@ -83,8 +87,12 @@ RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
     && tar -xzf mssql-jdbc.tar.gz --one-top-level=mssql-jdbc --strip-components=1 \
     && cp -r mssql-jdbc/enu/*jar ${SPARK_HOME}/jars/ \
     && rm mssql-jdbc.tar.gz \
-    && rm -rf mssql-jdbc 
-
+    && rm -rf mssql-jdbc \
+#Instalação Jar Delta
+    && mvn dependency:get -Dartifact=${DELTA_GROUP}:${DELTA_ARTIFACT}:${DELTA_VERSION} -Ddest=. \
+    && mvn dependency:get -Dartifact=io.delta:delta-storage:${DELTA_VERSION} -Ddest=. \
+    && mv ${DELTA_ARTIFACT}-${DELTA_VERSION}.jar /usr/spark/jars/ \
+    && mv delta-storage-${DELTA_VERSION}.jar /usr/spark/jars/ 
 # Instalando Jupyter
 RUN apt-get install -y python3 pip \
     && pip install jupyterlab \
