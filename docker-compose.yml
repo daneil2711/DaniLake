@@ -15,7 +15,7 @@ services:
       - "10001:10001" # HiveServer2 - HTTP Mode
       - "10002:10002" # Hiveserver2 WebUI
       - "8099:8099" # Airflow
-      - "4040:4040" # Airflow
+      - "4040:4040" # Spark jobs UI
 
     volumes:
       - hadoop_namenode:/usr/hadoop/data/namenode

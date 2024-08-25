@@ -11,28 +11,29 @@ default_args = {
 }
 
 with DAG(
-    'spark_submit',
+    'bronze_igdb',
     default_args=default_args,
     schedule_interval=None,
 ) as dag:
 
-    spark_submit_task = SparkSubmitOperator(
-        application='/opt/airflow/dags/sql.py',
-        task_id='spark_submit_task',
+    ingestion_bronze = SparkSubmitOperator(
+        application='/usr/notebooks/IGDB/src/bronze/ingestao.py',
+        task_id='ingestion_bronze',
         conn_id='spark_default',
         conf={
-            'spark.driver.memory': '2g',
-            'spark.driver.cores': '2',
-            'spark.executor.memory': '2g',
-            'spark.executor.cores': '2',
-            'spark.cores.max': '4',
+            'spark.driver.memory': '4g',
+            'spark.executor.memory': '4g',
             'spark.sql.warehouse.dir': 'hdfs://hadoop:9000/users/hive/warehouse',
             'spark.sql.extensions': 'io.delta.sql.DeltaSparkSessionExtension',
             'spark.sql.catalog.spark_catalog': 'org.apache.spark.sql.delta.catalog.DeltaCatalog',
         },
-        packages='io.delta:delta-core_2.12:2.1.0',
-        application_args=['arg1', 'arg2'],
+        packages='io.delta:delta-core_2.12:2.4.0,io.delta:delta-storage:2.4.0', 
+        application_args=[
+        '--table', '{{ dag_run.conf["table"] }}',
+        '--id_fields', '{{ dag_run.conf["id_fields"] }}',
+        '--timestamp_field', '{{ dag_run.conf["timestamp_field"] }}'
+        ],
         verbose=True,
     )
 
-    spark_submit_task
+    ingestion_bronze
