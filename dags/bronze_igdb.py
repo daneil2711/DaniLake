@@ -21,8 +21,11 @@ with DAG(
         task_id='ingestion_bronze',
         conn_id='spark_default',
         conf={
-            'spark.driver.memory': '4g',
-            'spark.executor.memory': '4g',
+            'spark.driver.memory': '2g',
+            'spark.driver.cores': '2',
+            'spark.executor.memory': '2g',
+            'spark.executor.cores': '2',
+            'spark.cores.max': '4',
             'spark.sql.warehouse.dir': 'hdfs://hadoop:9000/users/hive/warehouse',
             'spark.sql.extensions': 'io.delta.sql.DeltaSparkSessionExtension',
             'spark.sql.catalog.spark_catalog': 'org.apache.spark.sql.delta.catalog.DeltaCatalog',
