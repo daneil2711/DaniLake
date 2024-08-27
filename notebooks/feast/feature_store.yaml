@@ -1,0 +1,6 @@
+project: feast_project
+registry: /usr/notebooks/feast/config/registry.db
+provider: local
+
+offline_store:
+  type: spark

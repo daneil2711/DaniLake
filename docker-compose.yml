@@ -54,6 +54,18 @@ services:
     depends_on:
       - hadoop 
 
+  mlflow:
+    build: ./images/mlflow
+    container_name: mlflow
+    hostname: mlflow
+    ports:
+      - "5000:5000"
+    networks:
+      - danilake
+    volumes:
+      - mlflow_runs:/app/mlruns 
+      - ./notebooks:/usr/notebooks
+
   sqlserver:
     build: ./images/sql
     container_name: sqlserver
@@ -75,3 +87,4 @@ volumes:
   hadoop_namenode:
   hadoop_datanode:
   sqlserver_data:
+  mlflow_runs:
