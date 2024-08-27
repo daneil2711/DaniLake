@@ -64,7 +64,8 @@ services:
       - danilake
     volumes:
       - sqlserver_data:/var/opt/mssql  
-
+      - ./notebooks:/usr/notebooks
+      
 networks:
   danilake:
     driver: bridge

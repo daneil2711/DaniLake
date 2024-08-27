@@ -11,14 +11,14 @@ default_args = {
 }
 
 with DAG(
-    'bronze_igdb',
+    'silver_igdb',
     default_args=default_args,
     schedule_interval=None,
 ) as dag:
 
-    ingestao_bronze = SparkSubmitOperator(
-        application='/usr/notebooks/IGDB/src/bronze/ingestao.py',
-        task_id='ingestao_bronze',
+    ingestao_silver = SparkSubmitOperator(
+        application='/usr/notebooks/IGDB/src/silver/ingestao.py',
+        task_id='ingestao_silver',
         conn_id='spark_default',
         conf={
             'spark.driver.memory': '2g',
@@ -32,11 +32,9 @@ with DAG(
         },
         packages='io.delta:delta-core_2.12:2.4.0,io.delta:delta-storage:2.4.0', 
         application_args=[
-        '--table', '{{ dag_run.conf["table"] }}',
-        '--id_fields', '{{ dag_run.conf["id_fields"] }}',
-        '--timestamp_field', '{{ dag_run.conf["timestamp_field"] }}'
+        '--table', '{{ dag_run.conf["table"] }}'
         ],
         verbose=True,
     )
 
-    ingestao_bronze
+    ingestao_silver
