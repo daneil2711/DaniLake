@@ -10,6 +10,7 @@ else
     hdfs namenode -format
 fi
 
+echo "Iniciando SSH ....."
 #Start SSH
 /etc/init.d/ssh start
 
@@ -21,26 +22,33 @@ export YARN_NODEMANAGER_USER=root
 export SPARK_MASTER_HOST=spark-master
 export SPARK_MASTER_URL=spark://spark-master:7077
 
+echo "Iniciando hdfs ....."
 # Startando hadoop
 $HADOOP_HOME/sbin/start-dfs.sh
 $HADOOP_HOME/sbin/start-yarn.sh
 
 sleep 10
 #Inclusão Users
+echo "Ajustando Permissoes Users HDFS ....."
 hdfs dfs -mkdir /users/
 hdfs dfs -mkdir /users/Daniel
 hdfs dfs -chown -R Daniel:root /users/Daniel
 
 # # Startando hive
+echo "Iniciando networkServer....."
 nohup startNetworkServer &
 sleep 5
+echo "Iniciando Derby....."
 nohup schematool -dbType derby -initSchema &
 sleep 5
+echo "Iniciando hive....."
 nohup hive --service metastore &
 sleep 5
+echo "Iniciando hive2....."
 nohup hive --service hiveserver2 &
 sleep 5
 
+echo "Iniciando Jupyter....."
 #iniciando jupyter
 cd /usr/notebooks
 nohup jupyter-lab --NotebookApp.token='' --NotebookApp.disable_check_xsrf=True --ip='0.0.0.0' --port=8888 --no-browser --allow-root &
@@ -56,12 +64,15 @@ create_admin_user() {
         --role Admin \
         --email admin@example.com
 }
+sleep 5
 
 # Espera pelo banco de dados estar disponível
 until airflow db check; do
     echo "Waiting for database..."
     sleep 5
 done
+
+echo "Configs Airflow....."
 
 # Inicializa o banco de dados do Airflow (se necessário)
 airflow db init
@@ -80,6 +91,7 @@ sleep 5
 airflow scheduler &
 sleep 5
 #Iniciando airflow
+echo "Iniciando Airflow....."
 nohup airflow webserver -p 8099 &
 sleep 10
 ## Ajustando spark conf
@@ -100,6 +112,7 @@ CONNECTION_JSON=$(cat <<EOF
 }
 EOF
 )
+echo "Ajustando Spark Conf Airflow....."
 
 # Delete e depois Post do conf (n consegui usar o PATCH)
 curl -X DELETE "$AIRFLOW_API_URL/$CONNECTION_ID" \
