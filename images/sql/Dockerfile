@@ -1,16 +1,18 @@
-# Use the official SQL Server 2022 Developer image
+# Use a imagem oficial do SQL Server 2022 Developer
 FROM mcr.microsoft.com/mssql/server:2022-latest
 
-# Set environment variables
+# Definir variáveis de ambiente
 ENV ACCEPT_EULA=Y
 ENV SA_PASSWORD=YourStrong!Passw0rd
 
-# Expose the SQL Server port
+# Expor a porta do SQL Server
 EXPOSE 1433
 
-# Optional: Run a custom script or command here
-# COPY your-script.sql /scripts/
-# RUN /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $SA_PASSWORD -i /scripts/your-script.sql
+# Habilitar o SQL Server Agent
+RUN /opt/mssql/bin/mssql-conf set sqlagent.enabled true
 
-# Start SQL Server
+# Reiniciar o serviço SQL Server para aplicar a configuração
+RUN /opt/mssql/bin/sqlservr --accept-eula & sleep 20 && pkill sqlservr
+
+# Comando para iniciar o SQL Server
 CMD ["/opt/mssql/bin/sqlservr"]
