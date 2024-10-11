@@ -1,0 +1,11 @@
+Candidato	Tempo_Experiencia	Qtde_Cursos_Especializacoes	Idade	Area_Formacao	Salario_Atual	Nivel_Hierarquico_Atual
+Ana	9	9	33	Engenharia	9500	Senior
+Beatriz	3	4	26	Ciencia_Computacao	6000	Pleno
+Carlos	10	7	34	Analise_Sistemas	8000	Senior
+Fernando	8	2	32	Ciencia_Computacao	7300	Senior
+João	1	3	23	Engenharia	5800	Pleno
+Mariana	11	1	35	Ciencia_Computacao	6400	Pleno
+Paula	4	3	25	Analise_Sistemas	7000	Senior
+Pedro	9	0	30	Analise_Sistemas	6500	Pleno
+Ronaldo	2	5	25	Ciencia_Computacao	6200	Pleno
+Sueli	12	8	38	Engenharia	8300	Senior
