@@ -106,22 +106,22 @@ RUN pip install apache-airflow==2.8.1 \
 FROM spark_jupyter AS final
 
 #Necessario para instalar o factoextra (Kmeans) cmake e tydeverse (todo o resto) no R
-RUN apt-get update \
-    && apt install -y software-properties-common dirmngr cmake libssl-dev libfontconfig1-dev libcurl4-openssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+# RUN apt-get update \
+#     && apt install -y software-properties-common dirmngr cmake libssl-dev libfontconfig1-dev libcurl4-openssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 
-#GPG falha ao adicionar a chave na primeira tentantiva (aparentemente cria um diretório e arquivo necessário para adicionar a chave)
-# Fiz o script pensando na falha para funcionar no comando abaixo
-COPY configs/scripts/gpg.sh /
-RUN sh gpg.sh \
-    && gpg --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' \
-    && gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | tee /etc/apt/trusted.gpg.d/cran_debian_key.asc \
-    && add-apt-repository 'deb http://cloud.r-project.org/bin/linux/debian bullseye-cran40/' \
-    && apt-get update \
-    && apt install r-base r-base-dev -y 
+# #GPG falha ao adicionar a chave na primeira tentantiva (aparentemente cria um diretório e arquivo necessário para adicionar a chave)
+# # Fiz o script pensando na falha para funcionar no comando abaixo
+# COPY configs/scripts/gpg.sh /
+# RUN sh gpg.sh \
+#     && gpg --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' \
+#     && gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | tee /etc/apt/trusted.gpg.d/cran_debian_key.asc \
+#     && add-apt-repository 'deb http://cloud.r-project.org/bin/linux/debian bullseye-cran40/' \
+#     && apt-get update \
+#     && apt install r-base r-base-dev -y 
     
-#Lib R
-RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR','GGally','car','igraph','arules','arulesViz','urca','forecast','tidyverse','factoextra','Information'), type = 'source')" \
-    && R -e "IRkernel::installspec(user = FALSE)"
+# #Lib R
+# RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR','GGally','car','igraph','arules','arulesViz','urca','forecast','tidyverse','factoextra','Information'), type = 'source')" \
+#     && R -e "IRkernel::installspec(user = FALSE)"
 
 #Instalando lib do delta e pyspark - fixei aqui pra aproveitar o cache do Docker
 RUN pip install pyspark==3.4.3\
