@@ -93,15 +93,17 @@ RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
     && mvn dependency:get -Dartifact=io.delta:delta-storage:${DELTA_VERSION} -Ddest=. \
     && mv ${DELTA_ARTIFACT}-${DELTA_VERSION}.jar /usr/spark/jars/ \
     && mv delta-storage-${DELTA_VERSION}.jar /usr/spark/jars/ 
-# Instalando Jupyter
-RUN apt-get install -y python3 pip \
-    && pip install jupyterlab \
+
+# Instalando pip
+RUN apt-get install -y pip \
     && mkdir /usr/notebooks
 
-# Instalando Airflow
+# Instalando Airflow e libs
 RUN pip install apache-airflow==2.8.1 \
-&& pip uninstall apache-airflow-providers-fab -y
-
+&& pip uninstall apache-airflow-providers-fab -y \
+&& pip install flask_session==0.5.0 \
+&& pip install apache-airflow-providers-apache-spark \
+&& pip install pyarrow==15.0.2
 # Stage 4: Instalação do Airflow, R e configuração final
 FROM spark_jupyter AS final
 
@@ -122,17 +124,6 @@ FROM spark_jupyter AS final
 # #Lib R
 # RUN R -e "install.packages(c('repr', 'IRdisplay', 'IRkernel', 'rms', 'ROCR','GGally','car','igraph','arules','arulesViz','urca','forecast','tidyverse','factoextra','Information'), type = 'source')" \
 #     && R -e "IRkernel::installspec(user = FALSE)"
-
-#Instalando lib do delta e pyspark - fixei aqui pra aproveitar o cache do Docker
-RUN pip install pyspark==3.4.3\
-    && pip install delta-spark==2.4.0
-# Instalando libs Python do Jupyter
-COPY configs/jupyter/requirements.txt /
-RUN pip install -r requirements.txt
-
-# Config jupyter pra utilizar notebook como .py
-RUN jupyter-lab --generate-config
-COPY configs/jupyter/jupyter_lab_config.py /root/.jupyter/
 
 # Copia dos XMLs de conf
 COPY configs/hadoop/*.xml ${HADOOP_HOME}/etc/hadoop/

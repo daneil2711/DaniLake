@@ -3,6 +3,8 @@ metastore_db/
 notebooks/.virtual_documents
 notebooks/feast
 notebooks/SQL
+notebooks/MBA
+notebooks/TCC
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

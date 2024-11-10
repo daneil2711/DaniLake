@@ -10,7 +10,6 @@ services:
       - "9000:9000" # Conexao Externa HDFS
       - "8042:8042" # DataNode
       - "9864:9864" # DataNode WebUI
-      - "8888:8888" #Jupyter
       - "10000:10000" # HiveServer2 - Binary Mode
       - "10001:10001" # HiveServer2 - HTTP Mode
       - "10002:10002" # Hiveserver2 WebUI
@@ -25,6 +24,7 @@ services:
       - jupyterlab_config:/home/jovyan/.jupyter
       - jupyterlab_config:/root/.jupyter/
       - ./dags:/opt/airflow/dags
+      - spark_jars:/usr/spark/jars
     networks:
       - danilake
     command: ["/usr/local/bin/bootstrap.sh"]
@@ -36,6 +36,8 @@ services:
     ports:
       - "7077:7077"  # Porta do Spark Master
       - "8080:8080"  # Web UI do Spark Master
+    volumes:
+      - spark_jars:/usr/spark/jars
     networks:
       - danilake
     command: ["/usr/local/bin/start-master.sh"]
@@ -48,6 +50,8 @@ services:
     hostname: spark-worker
     ports:
       - "8081:8081"  # Web UI do Spark Worker
+    volumes:
+      - spark_jars:/usr/spark/jars
     networks:
       - danilake
     command: ["/usr/local/bin/start-worker.sh"]
@@ -69,14 +73,34 @@ services:
   sqlserver:
     build: ./images/sql
     container_name: sqlserver
+    privileged: true
     hostname: sqlserver
     ports:
       - "1433:1433"
+      - "2222:22"    # Porta para o SSH
+      - "53682:53682"    # rclone
     networks:
       - danilake
     volumes:
       - sqlserver_data:/var/opt/mssql  
       - ./notebooks:/usr/notebooks
+    environment:
+      MSSQL_TCP_PORT: 1433 
+
+  jupyter:
+    container_name: jupyter
+    build: ./images/jupyter
+    hostname: jupyter
+    ports:
+      - 8888:8888
+    tty: true
+    volumes:
+      - ./notebooks:/notebooks
+      - jupyterlab_config:/root/.jupyter/
+      - spark_jars:/usr/spark/jars
+    networks:
+      - danilake
+    command: bash -c "/start.sh"
       
 networks:
   danilake:
@@ -88,3 +112,4 @@ volumes:
   hadoop_datanode:
   sqlserver_data:
   mlflow_runs:
+  spark_jars:
