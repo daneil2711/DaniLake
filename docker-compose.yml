@@ -91,6 +91,7 @@ services:
     container_name: jupyter
     build: ./images/jupyter
     hostname: jupyter
+    privileged: true
     ports:
       - 8888:8888
     tty: true

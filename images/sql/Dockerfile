@@ -23,10 +23,11 @@ RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
 COPY config/rclone.conf /root/.config/rclone/rclone.conf
 
 # Cria o ponto de montagem para o OneDrive
-RUN mkdir -p /mnt/onedrive
+RUN mkdir -p /mnt/onedrive/SQL
+RUN mkdir -p /mnt/onedrive/MBA
 
 # Expose ports for SQL Server and SSH
-EXPOSE 1433 22 53682
+EXPOSE 1433 22
 
 # Configure SSH
 RUN echo 'root:YourRootPassword' | chpasswd && \

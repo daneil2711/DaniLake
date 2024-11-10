@@ -1,10 +1,6 @@
 #Inclusao
 metastore_db/
-notebooks/.virtual_documents
-notebooks/feast
-notebooks/SQL
-notebooks/MBA
-notebooks/TCC
+notebooks/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
