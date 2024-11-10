@@ -1,0 +1,17 @@
+name: myenv
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11   # Especificando a versão do Python
+  - matplotlib
+  - numpy
+  - pandas
+  - scikit-learn
+  - seaborn
+  - plotly
+  - ipython
+  - ipykernel
+  - cython
+  - jupyterlab
+  - scipy
+  - ipympl

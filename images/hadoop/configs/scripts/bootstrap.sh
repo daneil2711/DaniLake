@@ -47,12 +47,11 @@ sleep 5
 echo "Iniciando hive2....."
 nohup hive --service hiveserver2 &
 sleep 5
-
-echo "Iniciando Jupyter....."
-#iniciando jupyter
-cd /usr/notebooks
-nohup jupyter-lab --NotebookApp.token='' --NotebookApp.disable_check_xsrf=True --ip='0.0.0.0' --port=8888 --no-browser --allow-root &
-sleep 5
+# echo "Iniciando Jupyter....."
+# #iniciando jupyter
+# cd /usr/notebooks
+# nohup jupyter-lab --NotebookApp.token='' --NotebookApp.disable_check_xsrf=True --ip='0.0.0.0' --port=8888 --no-browser --allow-root &
+# sleep 5
 
 # Função para criar o usuário administrador
 create_admin_user() {
