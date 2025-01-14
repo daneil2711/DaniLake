@@ -21,9 +21,9 @@ with DAG(
         task_id='feature_store_igdb',
         conn_id='spark_default',
         conf={
-            'spark.driver.memory': '2g',
-            'spark.driver.cores': '2',
-            'spark.executor.memory': '2g',
+            'spark.driver.memory': '20g',
+            'spark.driver.cores': '12',
+            'spark.executor.memory': '3400m',
             'spark.executor.cores': '2',
             'spark.sql.warehouse.dir': 'hdfs://hadoop:9000/users/hive/warehouse',
             'spark.sql.extensions': 'io.delta.sql.DeltaSparkSessionExtension',

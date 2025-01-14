@@ -57,9 +57,9 @@ RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
 COPY config/rclone.conf /root/.config/rclone/rclone.conf
 
 # Criando diretorios
-RUN mkdir /notebooks && \
-    mkdir -p /notebooks/MBA && \
-    mkdir -p /notebooks/SQL
+RUN mkdir -p /usr/notebooks && \
+    mkdir -p /usr/notebooks/MBA && \
+    mkdir -p /usr/notebooks/SQL
 
 # Expor a porta do JupyterLab
 EXPOSE 8888

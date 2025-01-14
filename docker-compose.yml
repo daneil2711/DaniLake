@@ -14,7 +14,6 @@ services:
       - "10001:10001" # HiveServer2 - HTTP Mode
       - "10002:10002" # Hiveserver2 WebUI
       - "8099:8099" # Airflow
-      - "4040:4040" # Spark jobs UI
 
     volumes:
       - hadoop_namenode:/usr/hadoop/data/namenode
@@ -93,10 +92,11 @@ services:
     hostname: jupyter
     privileged: true
     ports:
+      - "4040:4040" # Spark jobs UI
       - 8888:8888
     tty: true
     volumes:
-      - ./notebooks:/notebooks
+      - ./notebooks:/usr/notebooks
       - jupyterlab_config:/root/.jupyter/
       - spark_jars:/usr/spark/jars
     networks:
