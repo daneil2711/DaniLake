@@ -13,6 +13,34 @@ ENV HADOOP_COMMON_LIB_NATIVE $HADOOP_HOME/lib/native
 ENV HADOOP_USER_CLASSPATH_FIRST true
 ENV PATH $PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 ENV HADOOP_OPTS "-Djava.library.path=$HADOOP_HOME/lib/native"
+ENV PYSPARK_PYTHON=/usr/local/bin/python3.11
+ENV PYSPARK_DRIVER_PYTHON=/usr/local/bin/python3.11
+
+# Instale as dependências necessárias para compilar o Python
+RUN apt-get update && \
+    apt-get install -y \
+    wget build-essential zlib1g-dev libncurses5-dev libgdbm-dev \
+    libnss3-dev libssl-dev libreadline-dev libffi-dev curl libbz2-dev libsqlite3-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# instalando Python 3.11
+RUN cd /tmp && \
+    wget https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tgz && \
+    tar -xf Python-3.11.0.tgz && \
+    cd Python-3.11.0 && \
+    ./configure --enable-optimizations && \
+    make -j $(nproc) && \
+    make install
+
+# Atualize o link simbólico do python3 para a versão 3.11
+RUN ln -sf /usr/local/bin/python3.11 /usr/bin/python3 && \
+    ln -sf /usr/local/bin/python3.11 /usr/bin/python
+
+# Instale o pip para Python 3.11
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+
+# Limpe os arquivos temporários
+RUN rm -rf /tmp/Python-3.11.0 /tmp/Python-3.11.0.tgz
 
 # Instalando Hadoop
 RUN apt-get update && apt-get install -y ssh wget curl openssh-server maven\
@@ -98,12 +126,18 @@ RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
 RUN apt-get install -y pip \
     && mkdir /usr/notebooks
 
-# Instalando Airflow e libs
+# Instalando libs
 RUN pip install apache-airflow==2.8.1 \
 && pip uninstall apache-airflow-providers-fab -y \
 && pip install flask_session==0.5.0 \
 && pip install apache-airflow-providers-apache-spark \
-&& pip install pyarrow==15.0.2
+&& pip install hdfs==2.7.3 \
+&& pip install delta-spark==2.4.0
+
+COPY configs/spark/requirements.txt /usr/
+
+RUN pip install -r /usr/requirements.txt
+
 # Stage 4: Instalação do Airflow, R e configuração final
 FROM spark_jupyter AS final
 

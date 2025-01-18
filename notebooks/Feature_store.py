@@ -34,7 +34,9 @@ builder = pyspark.sql.SparkSession.builder.appName("Feast") \
     .config("spark.cores.max", "4") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
-    .config("spark.sql.execution.arrow.pyspark.enabled", "true") \
+    .config("spark.sql.warehouse.dir", "hdfs://hadoop:9000/users/hive/warehouse") \
+    .config("hive.metastore.uris", "thrift://hadoop:9083") \
+    .config("spark.jars", "/usr/spark/jars/mssql-jdbc-6.2.2.jre8.jar") \
     .enableHiveSupport()
 
 spark = configure_spark_with_delta_pip(builder).getOrCreate()
@@ -113,3 +115,20 @@ print(features)
 
 # %%
 spark.sql('drop DATABASE teste_feature cascade')
+
+# %%
+
+# %%
+feature_views = store.list_feature_views()
+for view in feature_views:
+    print(view.name)
+
+
+# %%
+for view in feature_views:
+    print(f"Feature View: {view.name}")
+    for feature in view.features:
+        print(f"  - Feature name: {feature.name}, dtype: {feature.dtype}")
+
+
+# %%
