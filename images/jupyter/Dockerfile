@@ -36,10 +36,6 @@ ENV HDFS_NAMENODE_URI=hdfs://hadoop:9000
 
 RUN pip install --upgrade pip setuptools
 
-# Config jupyter pra utilizar notebook como .py
-RUN /bin/bash -c "source /opt/conda/etc/profile.d/conda.sh && conda activate myenv && jupyter-lab --generate-config"
-COPY config/jupyter_lab_config.py /root/.jupyter/
-
 # Copiar o requirements.txt e instalar as dependências extras via pip
 COPY config/requirements.txt /tmp/requirements.txt
 RUN /bin/bash -c "source /opt/conda/etc/profile.d/conda.sh && conda activate myenv \
@@ -56,10 +52,18 @@ RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
 # Copia o arquivo de configuração rclone.conf que contém a autenticação do OneDrive
 COPY config/rclone.conf /root/.config/rclone/rclone.conf
 
+# Config jupyter pra utilizar notebook como .py
+RUN /bin/bash -c "source /opt/conda/etc/profile.d/conda.sh && conda activate myenv && jupyter-lab --generate-config"
+COPY config/jupyter_lab_config.py /root/.jupyter/
+
 # Criando diretorios
 RUN mkdir -p /usr/notebooks && \
     mkdir -p /usr/notebooks/MBA && \
     mkdir -p /usr/notebooks/SQL
+
+ENV OMP_NUM_THREADS=4
+ENV MKL_NUM_THREADS=4
+ENV NUMEXPR_NUM_THREADS=4
 
 # Expor a porta do JupyterLab
 EXPOSE 8888

@@ -101,6 +101,15 @@ services:
       - spark_jars:/usr/spark/jars
     networks:
       - danilake
+    environment:
+      - OMP_NUM_THREADS=4
+      - MKL_NUM_THREADS=4
+      - NUMEXPR_NUM_THREADS=4
+    deploy:
+      resources:
+        limits:
+          cpus: "4"  # Limita o uso a 8 núcleos do CPU
+          memory: "12g"  # Limita o uso a 8 GB de RAM
     command: bash -c "/start.sh"
       
 networks:

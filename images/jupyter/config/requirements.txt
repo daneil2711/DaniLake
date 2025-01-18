@@ -12,7 +12,7 @@ jupyterlab-lsp==5.1.0
 python-lsp-server[all]
 protobuf==4.25.5
 grpcio-status==1.62.3
-feature_engine==1.8.2
+# feature_engine==1.8.2
 opentelemetry-proto==1.27.0
 googleapis-common-protos==1.65.0
 apache-airflow==2.10.2
